@@ -5,33 +5,154 @@ import VideoContainer from "./components/VideoContainer";
 import { videosData } from "./data/Data";
 import { BrowserRouter, Link, Route, Routes } from "react-router-dom";
 import Watch from "./components/Watch";
+import { getCommentsByVideo } from "./api/API";
+import SubsSection from "./components/Subscriptions/SubsSection";
+import ErrorBoundary from "./components/ErrorBoundary";
 
-const getTheme = (mode) => {
+/* 
+npm install
+npx json-server db.json
+npm start
+*/
+
+export const USER_ID = "u1";
+
+export function onRenderCallback(
+  id,
+  phase,
+  actualDuration,
+  baseDuration,
+  startTime,
+  commitTime,
+) {
+  return;
+}
+
+const getTheme = (isLightTheme) => {
   const theme = createTheme({
     palette: {
-      mode: (mode && "light") || "dark",
+      mode: (isLightTheme && "light") || "dark",
+      youtubeTheme: {
+        main: isLightTheme ? "#000000" : "#ffffff",
+      },
+    },
+    components: {
+      MuiButton: {
+        variants: [
+          {
+            props: {
+              variant: "subscribe",
+            },
+            style: isLightTheme
+              ? {
+                  textTransform: "none",
+                  backgroundColor: "#191830",
+                  color: "white",
+                  "&:hover": {
+                    backgroundColor: "#272727",
+                  },
+                }
+              : {
+                  textTransform: "none",
+                  backgroundColor: "white",
+                  color: "black",
+                },
+          },
+          {
+            props: {
+              variant: "unsubscribe",
+            },
+            style: isLightTheme
+              ? {
+                  textTransform: "none",
+                  backgroundColor: "transparent",
+                  color: "#191830",
+                  borderWidth: "1px",
+                  borderColor: "#191830",
+                  borderStyle: "solid",
+                  "&:hover": {
+                    borderColor: "#272727",
+                    color: "#272727",
+                  },
+                }
+              : {
+                  textTransform: "none",
+                  backgroundColor: "transparent",
+                  color: "white",
+                  borderWidth: "1px",
+                  borderColor: "white",
+                  borderStyle: "solid",
+                },
+          },
+          {
+            props: {
+              variant: "badged",
+            },
+            style: isLightTheme
+              ? {
+                  backgroundColor: "#f7f7f7",
+                  "&:hover": {
+                    backgroundColor: "#e5e5e5",
+                  },
+                  textTransform: "none",
+                }
+              : {
+                  backgroundColor: "#272727",
+                  "&:hover": {
+                    backgroundColor: "#3f3f3f",
+                  },
+                  textTransform: "none",
+                },
+          },
+        ],
+      },
     },
   });
   return theme;
 };
 
 function App() {
-  const [isLight, setIsLight] = useState(true);
+  getCommentsByVideo("v1");
+  const [isLight, setIsLight] = useState(
+    localStorage.getItem("isLight") === null
+      ? true
+      : JSON.parse(localStorage.getItem("isLight")),
+  );
+
   return (
     <ThemeProvider theme={getTheme(isLight)}>
-      <div className="App">
+      <div className="App" data-testid={"App-test"}>
         <BrowserRouter>
           <Routes>
             <Route
               path="/"
               element={<MyDrawer isLight={isLight} setIsLight={setIsLight} />}
             >
-              <Route index element={<VideoContainer videos={videosData} />} />
+              <Route
+                index
+                element={
+                  <ErrorBoundary>
+                    <VideoContainer videos={videosData} />
+                  </ErrorBoundary>
+                }
+              />
               <Route
                 path="videos"
-                element={<VideoContainer videos={videosData} />}
+                element={
+                  <ErrorBoundary>
+                    <VideoContainer videos={videosData} />
+                  </ErrorBoundary>
+                }
               />
               <Route path="watch/:id" element={<Watch />} />
+              <Route
+                path="subscriptions"
+                element={
+                  <ErrorBoundary>
+                    <SubsSection />
+                  </ErrorBoundary>
+                }
+              />
             </Route>
             <Route
               path="*"

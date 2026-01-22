@@ -12,6 +12,8 @@ import SearchRoundedIcon from "@mui/icons-material/SearchRounded";
 
 import { drawerWidth } from "./MyDrawer";
 import { Add, DarkMode, Sunny } from "@mui/icons-material";
+import { Link } from "react-router-dom";
+import { USER_ID } from "../App";
 
 const AppBar = styled(MuiAppBar, {
   shouldForwardProp: (prop) => prop !== "open",
@@ -49,7 +51,10 @@ export default function Header({
 }) {
   const theme = useTheme();
   const toggleIsLight = () => {
-    setIsLight((prev) => !prev);
+    setIsLight((prev) => {
+      localStorage.setItem("isLight", !prev);
+      return !prev;
+    });
   };
   return (
     <AppBar
@@ -59,6 +64,7 @@ export default function Header({
     >
       <Toolbar>
         <IconButton
+          data-testid="drawer-toggle"
           color="inherit"
           aria-label="open drawer"
           onClick={handleDrawerOpen}
@@ -70,10 +76,18 @@ export default function Header({
         >
           <MenuIcon color="action" />
         </IconButton>
-        <YouTubeIcon sx={{ fill: "red", width: 30 }} />
-        <Typography color="textPrimary" variant="h6" noWrap component="div">
-          YouTube
-        </Typography>
+        <Box
+          display={"flex"}
+          to={"/"}
+          component={Link}
+          alignItems={"center"}
+          sx={{ textDecoration: "none" }}
+        >
+          <YouTubeIcon sx={{ fill: "red", width: 30 }} />
+          <Typography color="textPrimary" variant="h6" noWrap component="div">
+            YouTube
+          </Typography>
+        </Box>
         <StyledInput
           sx={{
             mr: 1,
@@ -105,7 +119,7 @@ export default function Header({
         >
           <MicNoneRoundedIcon />
         </IconButton>
-        <Box display={"flex"} gap={1}>
+        <Box display={"flex"} gap={1} alignItems={"center"}>
           <Button
             sx={{
               textTransform: "unset",
@@ -121,10 +135,12 @@ export default function Header({
           <IconButton sx={{ p: 0.5, display: { sm: "flex", xs: "none" } }}>
             <NotificationsNoneOutlinedIcon />
           </IconButton>
-          <IconButton onClick={toggleIsLight}>
+          <IconButton data-testid="toggle-theme" onClick={toggleIsLight}>
             {(isLight && <DarkMode />) || <Sunny />}
           </IconButton>
-          <Avatar sx={{ width: 30, height: 30 }} />
+          <Avatar sx={{ width: 30, height: 30 }}>
+            {USER_ID[0].toUpperCase()}
+          </Avatar>
         </Box>
       </Toolbar>
     </AppBar>
