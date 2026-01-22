@@ -98,7 +98,7 @@ export default function Watch() {
     getVideo(id).then((res) => {
       setVideo(res?.data?.[0]);
     });
-  }, []);
+  }, [id]);
 
   return video ? (
     <Profiler id="watchVideo" onRender={onRenderCallback}>
