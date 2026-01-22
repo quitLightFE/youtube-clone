@@ -4,7 +4,6 @@ import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import Container from "@mui/material/Container";
 import Grid from "@mui/material/Grid";
-import { useTheme } from "@mui/material";
 
 import { Skeleton } from "@mui/material";
 import { useEffect, useState } from "react";
@@ -68,10 +67,10 @@ function VideoCardSkeleton() {
 }
 
 export default function VideoContainer() {
-  const theme = useTheme();
   const [data, setData] = useState([]);
   const [isError, setIsError] = useState(null);
   const [isLoading, setIsLodaing] = useState(true);
+  console.log("isError: " + isError);
 
   useEffect(() => {
     (async () => {
@@ -114,6 +113,6 @@ export default function VideoContainer() {
         </Container>
       </Box>
     </Profiler>,
-    document.getElementById("videos")
+    document.getElementById("videos"),
   );
 }

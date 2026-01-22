@@ -55,6 +55,7 @@ export default function Comments({ videoId }) {
   const [comments, setComments] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  console.log("error: " + error);
 
   useEffect(() => {
     getCommentsByVideo(videoId)
@@ -67,7 +68,7 @@ export default function Comments({ videoId }) {
           throw err;
         }),
       );
-  }, []);
+  }, [videoId]);
   //
   const handleAddComment = useCallback(
     async (text) => {
